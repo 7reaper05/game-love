@@ -1,0 +1,367 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2685.5">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="en"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1">&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1">&lt;meta name="viewport" content="width=device-width, initial-scale=1.0"&gt;</p>
+<p class="p1">&lt;title&gt;Our Memories&lt;/title&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;style&gt;</p>
+<p class="p1">body {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-family: 'Courier New', monospace;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: black;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>color: white;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🔐 LOCK SCREEN */</p>
+<p class="p1">#lockScreen {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: black;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>flex-direction: column;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>justify-content: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>align-items: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 100;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#lockScreen h1 {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size: 2.5rem;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">input {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>font-size: 1.2rem;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>text-align: center;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">button {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 10px 20px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cursor: pointer;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🎬 MAIN */</p>
+<p class="p1">#mainContent {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100vh;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>overflow: hidden;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🎞️ FILM SYSTEM */</p>
+<p class="p1">.film-container {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 200%;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.film-row {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: relative;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: max-content;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>gap: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 25px 20px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>margin: 40px 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: #111;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.film-track {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: flex;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🎞️ HOLES */</p>
+<p class="p1">.film-row::before,</p>
+<p class="p1">.film-row::after {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>content: "";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>left: 0;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 14px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background-image: repeating-linear-gradient(</p>
+<p class="p1"><span class="Apple-converted-space">    </span>to right,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transparent 0px,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>transparent 18px,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>black 18px,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>black 26px</p>
+<p class="p1"><span class="Apple-converted-space">  </span>);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 2;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">.film-row::before { top: 0; }</p>
+<p class="p1">.film-row::after { bottom: 0; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* 📸 PHOTOS */</p>
+<p class="p1">.photo {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 160px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 110px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background-size: cover;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background-position: center;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>border: 2px solid #222;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>flex-shrink: 0;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🧠 PARALLAX */</p>
+<p class="p1">.slow { animation: scroll 40s linear infinite; opacity: 0.4; transform: scale(0.9);}</p>
+<p class="p1">.medium { animation: scroll 25s linear infinite; opacity: 0.7;}</p>
+<p class="p1">.fast { animation: scroll 15s linear infinite; transform: scale(1.1);}</p>
+<p class="p2"><br></p>
+<p class="p1">@keyframes scroll {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>0% { transform: translateY(0); }</p>
+<p class="p1"><span class="Apple-converted-space">  </span>100% { transform: translateY(-50%); }</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 💌 LETTERS */</p>
+<p class="p1">.letter {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 220px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>padding: 15px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: rgba(0,0,0,0.6);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>border: 1px solid white;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>backdrop-filter: blur(5px);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#l1 { top: 10%; left: 5%; }</p>
+<p class="p1">#l2 { top: 30%; right: 5%; }</p>
+<p class="p1">#l3 { top: 55%; left: 10%; }</p>
+<p class="p1">#l4 { top: 70%; right: 10%; }</p>
+<p class="p1">#l5 { top: 20%; left: 40%; }</p>
+<p class="p1">#l6 { top: 65%; left: 45%; }</p>
+<p class="p2"><br></p>
+<p class="p1">/* ✨ GRAIN */</p>
+<p class="p1">.grain {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>pointer-events: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: url('https://grainy-gradients.vercel.app/noise.svg');</p>
+<p class="p1"><span class="Apple-converted-space">  </span>opacity: 0.15;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 5;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ♾️ BUTTON */</p>
+<p class="p1">#portalBtn {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>bottom: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>right: 25px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>opacity: 0.3;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 20;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#portalBtn:hover {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>opacity: 1;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>transform: scale(1.3);</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🌌 BLACK HOLE */</p>
+<p class="p1">#blackHolePage {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: fixed;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>background: black;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>display: none;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>z-index: 200;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#blackHoleCanvas {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>height: 100%;</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">#backBtn {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>position: absolute;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>bottom: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>right: 25px;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>cursor: pointer;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>opacity: 0.5;</p>
+<p class="p1">}</p>
+<p class="p1">&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- 🔐 LOCK --&gt;</p>
+<p class="p1">&lt;div id="lockScreen"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;h1&gt;Enter Passcode&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;input type="password" id="code"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;button onclick="unlock()"&gt;Unlock&lt;/button&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- 🎬 MAIN --&gt;</p>
+<p class="p1">&lt;div id="mainContent"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="grain"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div class="film-container"&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;!-- 🎞️ ROW --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="film-row slow"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="film-track"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;!-- DUPLICATE SET --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('1.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('2.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('3.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('4.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('5.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('1.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('2.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('3.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('4.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('5.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="film-row medium"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="film-track"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('6.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('7.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('8.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('9.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('6.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('7.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('8.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('9.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div class="film-row fast"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;div class="film-track"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('10.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('11.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('12.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('10.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('11.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>&lt;div class="photo" style="background-image:url('12.jpg')"&gt;&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/div&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- 💌 LETTERS --&gt;</p>
+<p class="p1">&lt;div class="letter" id="l1"&gt;Your message 💌&lt;/div&gt;</p>
+<p class="p1">&lt;div class="letter" id="l2"&gt;Another memory ✨&lt;/div&gt;</p>
+<p class="p1">&lt;div class="letter" id="l3"&gt;A cute note 💭&lt;/div&gt;</p>
+<p class="p1">&lt;div class="letter" id="l4"&gt;Something meaningful ❤️&lt;/div&gt;</p>
+<p class="p1">&lt;div class="letter" id="l5"&gt;Inside joke 😌&lt;/div&gt;</p>
+<p class="p1">&lt;div class="letter" id="l6"&gt;Forever ♾️&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;div id="portalBtn" onclick="openPortal()"&gt;∞&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- 🌌 BLACK HOLE --&gt;</p>
+<p class="p1">&lt;div id="blackHolePage"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;canvas id="blackHoleCanvas"&gt;&lt;/canvas&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;div id="backBtn" onclick="closePortal()"&gt;∞&lt;/div&gt;</p>
+<p class="p1">&lt;/div&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;!-- 🎵 MUSIC --&gt;</p>
+<p class="p1">&lt;audio id="bgMusic" loop&gt;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>&lt;source src="your-song.mp3" type="audio/mpeg"&gt;</p>
+<p class="p1">&lt;/audio&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;script&gt;</p>
+<p class="p1">function unlock() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const pass = document.getElementById("code").value;</p>
+<p class="p1"><span class="Apple-converted-space">  </span>const music = document.getElementById("bgMusic");</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>if(pass === "yourpasscode") {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>lockScreen.style.display = "none";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>mainContent.style.display = "block";</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>music.volume = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>music.play();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let vol = 0;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>const fade = setInterval(() =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">      </span>if (vol &lt; 0.6) {</p>
+<p class="p1"><span class="Apple-converted-space">        </span>vol += 0.05;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>music.volume = vol;</p>
+<p class="p1"><span class="Apple-converted-space">      </span>} else clearInterval(fade);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>}, 200);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>}</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* ♾️ PORTAL */</p>
+<p class="p1">function openPortal() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>mainContent.style.display = "none";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>blackHolePage.style.display = "block";</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function closePortal() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>blackHolePage.style.display = "none";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>mainContent.style.display = "block";</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">/* 🌌 BLACK HOLE */</p>
+<p class="p1">const canvas = document.getElementById("blackHoleCanvas");</p>
+<p class="p1">const ctx = canvas.getContext("2d");</p>
+<p class="p2"><br></p>
+<p class="p1">canvas.width = window.innerWidth;</p>
+<p class="p1">canvas.height = window.innerHeight;</p>
+<p class="p2"><br></p>
+<p class="p1">let particles = [];</p>
+<p class="p2"><br></p>
+<p class="p1">for (let i = 0; i &lt; 800; i++) {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>particles.push({</p>
+<p class="p1"><span class="Apple-converted-space">    </span>angle: Math.random() * Math.PI * 2,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>radius: Math.random() * 300,</p>
+<p class="p1"><span class="Apple-converted-space">    </span>speed: 0.002 + Math.random() * 0.004</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p1">}</p>
+<p class="p2"><br></p>
+<p class="p1">function animate() {</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fillStyle = "rgba(0,0,0,0.2)";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fillRect(0,0,canvas.width,canvas.height);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>particles.forEach(p =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">    </span>p.angle += p.speed;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>p.radius *= 0.995;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>if (p.radius &lt; 2) p.radius = 300;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>let x = canvas.width/2 + Math.cos(p.angle)*p.radius;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>let y = canvas.height/2 + Math.sin(p.angle)*p.radius;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.arc(x,y,1.2,0,Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fillStyle="white";</p>
+<p class="p1"><span class="Apple-converted-space">    </span>ctx.fill();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>});</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>/* glow core */</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.beginPath();</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.arc(canvas.width/2,canvas.height/2,40,0,Math.PI*2);</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fillStyle="rgba(255,255,255,0.05)";</p>
+<p class="p1"><span class="Apple-converted-space">  </span>ctx.fill();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">  </span>requestAnimationFrame(animate);</p>
+<p class="p1">}</p>
+<p class="p1">animate();</p>
+<p class="p1">&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
