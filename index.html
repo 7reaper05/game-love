@@ -1,19 +1,16 @@
-Here is the updated code! I have integrated all six of your real cats with their exact breeds and coloring. Each stage of the game now feels completely personal as **Aranza the Magic Fairy** rescues them one by one before meeting **Chato** in the ultimate, magical sanctuary room.
-
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aranza's Magical Quest</title>
+    <title>Aranza's 2D Magical Quest</title>
     <style>
         :root {
             --bg-color: #0c0a1c;
-            --accent-color: #f472b6; /* Fairy Pink */
+            --accent-color: #f472b6;
             --magic-gold: #fbbf24;
             --text-color: #f8fafc;
-            --card-bg: rgba(30, 27, 75, 0.85);
+            --danger-color: #a855f7;
         }
 
         * {
@@ -21,6 +18,8 @@ Here is the updated code! I have integrated all six of your real cats with their
             margin: 0;
             padding: 0;
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            user-select: none;
+            -webkit-user-select: none;
             -webkit-tap-highlight-color: transparent;
         }
 
@@ -35,56 +34,45 @@ Here is the updated code! I have integrated all six of your real cats with their
             align-items: center;
         }
 
-        /* Ambient background sparkles */
-        .twinkle-bg {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            background: radial-gradient(circle at 50% 50%, #1e1b4b 0%, #090514 100%);
-            z-index: -1;
-        }
-
         .screen {
             position: absolute;
             width: 100%;
             height: 100%;
-            max-width: 900px;
-            max-height: 650px;
+            max-width: 1024px;
+            max-height: 700px;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 20px;
-            transition: opacity 0.6s ease, transform 0.6s ease;
+            padding: 15px;
+            transition: opacity 0.5s ease;
             opacity: 0;
-            transform: scale(0.97);
             pointer-events: none;
         }
 
         .screen.active {
             opacity: 1;
-            transform: scale(1);
             pointer-events: auto;
         }
 
-        /* Passcode Styles */
+        /* Passcode Lock Setup */
         .lock-container {
-            background: var(--card-bg);
+            background: rgba(30, 27, 75, 0.85);
             border: 2px solid var(--accent-color);
             backdrop-filter: blur(10px);
-            padding: 35px;
+            padding: 30px;
             border-radius: 24px;
-            box-shadow: 0 0 30px rgba(244, 114, 182, 0.2);
             text-align: center;
             width: 90%;
-            max-width: 360px;
+            max-width: 350px;
+            box-shadow: 0 0 30px rgba(244, 114, 182, 0.2);
         }
 
         .dots-container {
             display: flex;
             justify-content: center;
             gap: 15px;
-            margin: 25px 0;
+            margin: 20px 0;
         }
 
         .dot {
@@ -92,7 +80,6 @@ Here is the updated code! I have integrated all six of your real cats with their
             height: 16px;
             border: 2px solid var(--accent-color);
             border-radius: 50%;
-            transition: all 0.2s;
         }
 
         .dot.filled {
@@ -103,19 +90,18 @@ Here is the updated code! I have integrated all six of your real cats with their
         .keypad {
             display: grid;
             grid-template-columns: repeat(3, 1fr);
-            gap: 15px;
+            gap: 12px;
         }
 
         .key {
             background: rgba(255, 255, 255, 0.07);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-color);
-            font-size: 1.4rem;
-            padding: 15px 0;
+            font-size: 1.3rem;
+            padding: 12px 0;
             border-radius: 50%;
             aspect-ratio: 1;
             cursor: pointer;
-            transition: background 0.1s;
         }
 
         .key:active {
@@ -123,172 +109,91 @@ Here is the updated code! I have integrated all six of your real cats with their
             color: #000;
         }
 
-        /* Map UI */
-        .game-header {
-            text-align: center;
-            margin-bottom: 15px;
-            text-shadow: 0 0 10px rgba(244, 114, 182, 0.5);
-        }
-
-        .avatar-badge {
-            background: rgba(255, 255, 255, 0.1);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.9rem;
-            border: 1px solid var(--accent-color);
-            display: inline-block;
-            margin-bottom: 5px;
-        }
-
-        .game-viewport {
+        /* 2D Canvas Engine Setup */
+        .game-wrapper {
             position: relative;
             width: 100%;
-            flex-grow: 1;
-            background: linear-gradient(180deg, #1e113c 0%, #110726 100%);
-            border: 2px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            overflow: hidden;
-            box-shadow: inset 0 0 60px rgba(0,0,0,0.8);
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
 
-        /* Adventure Elements */
-        .fairy-dust {
-            position: absolute;
-            font-size: 1.5rem;
-            opacity: 0.25;
-            animation: float-slow 4s ease-in-out infinite alternate;
+        .game-header {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 12px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 12px;
+            margin-bottom: 8px;
         }
 
-        .chest {
-            position: absolute;
-            font-size: 3.5rem;
-            cursor: pointer;
-            transition: transform 0.2s;
-            animation: pulse-glow 2.5s infinite ease-in-out;
-            user-select: none;
-        }
-
-        .chest:hover {
-            transform: scale(1.15);
-        }
-
-        @keyframes pulse-glow {
-            0%, 100% { filter: drop-shadow(0 0 5px var(--magic-gold)); transform: translateY(0); }
-            50% { filter: drop-shadow(0 0 20px var(--magic-gold)); transform: translateY(-8px); }
-        }
-
-        @keyframes float-slow {
-            0% { transform: translateY(0) rotate(0deg); }
-            100% { transform: translateY(-15px) rotate(15deg); }
-        }
-
-        /* Modals & Dialog System */
-        .modal {
-            position: absolute;
-            bottom: 25px;
-            left: 25px;
-            right: 25px;
-            background: rgba(13, 10, 36, 0.95);
+        #gameCanvas {
+            background: linear-gradient(180deg, #120b2e 0%, #05020a 100%);
             border: 2px solid var(--accent-color);
-            padding: 22px;
             border-radius: 16px;
-            transform: translateY(160%);
-            transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.2);
-            text-align: center;
-            box-shadow: 0 -10px 30px rgba(0,0,0,0.5);
-            z-index: 10;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            width: 100%;
+            max-height: 400px;
+            aspect-ratio: 2 / 1;
         }
 
-        .modal.active {
-            transform: translateY(0);
+        /* Controls for iPad/Touch interaction */
+        .controls-container {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            max-width: 600px;
+            margin-top: 15px;
+            padding: 0 20px;
+        }
+
+        .dpad-btn {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+            color: white;
+            font-size: 2rem;
+            width: 65px;
+            height: 65px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .dpad-btn:active {
+            background: var(--accent-color);
+        }
+
+        /* Dialogue Box overlay system */
+        .dialogue-overlay {
+            position: absolute;
+            bottom: 110px;
+            left: 5%;
+            right: 5%;
+            background: rgba(13, 10, 36, 0.98);
+            border: 2px solid var(--magic-gold);
+            padding: 20px;
+            border-radius: 16px;
+            text-align: center;
+            display: none;
+            box-shadow: 0 0 25px rgba(0,0,0,0.8);
+            z-index: 10;
         }
 
         .btn {
             background: linear-gradient(135deg, var(--accent-color) 0%, #db2777 100%);
             color: white;
             border: none;
-            padding: 12px 28px;
+            padding: 10px 24px;
             font-weight: bold;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 1rem;
-            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.4);
-            margin-top: 10px;
-        }
-
-        .btn:active {
-            transform: scale(0.98);
-        }
-
-        /* Magical Trophy Room */
-        .trophy-room {
-            background: linear-gradient(135deg, #2e1065 0%, #4c1d95 50%, #0f172a 100%) !important;
-            border: 3px solid var(--magic-gold) !important;
-            box-shadow: inset 0 0 100px rgba(251, 191, 36, 0.3), 0 20px 50px rgba(0,0,0,0.6);
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            padding: 30px !important;
-        }
-
-        .room-grid {
-            position: relative;
-            width: 100%;
-            height: 100%;
-        }
-
-        .magic-bed {
-            position: absolute;
-            bottom: 40px;
-            left: 50%;
-            transform: translateX(-50%);
-            font-size: 5.5rem;
-            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
-        }
-
-        .npc-chato {
-            position: absolute;
-            bottom: 125px;
-            left: 30%;
-            font-size: 4.5rem;
-            animation: float-slow 3s ease-in-out infinite alternate;
-            filter: drop-shadow(0 0 15px var(--magic-gold));
-            cursor: pointer;
-        }
-
-        .player-aranza {
-            position: absolute;
-            bottom: 125px;
-            right: 30%;
-            font-size: 4.5rem;
-            animation: float-slow 3s ease-in-out infinite alternate-reverse;
-            filter: drop-shadow(0 0 15px var(--accent-color));
-        }
-
-        .cat-display {
-            position: absolute;
-            text-align: center;
-            animation: float-slow 4s ease-in-out infinite alternate;
-        }
-
-        .cat-emoji {
-            font-size: 2.8rem;
-            filter: drop-shadow(0 4px 8px rgba(255,255,255,0.2));
-        }
-
-        .cat-label {
-            background: rgba(0, 0, 0, 0.6);
-            padding: 2px 6px;
             border-radius: 8px;
-            font-size: 0.75rem;
-            border: 1px solid rgba(255,255,255,0.2);
-            white-space: nowrap;
-        }
-
-        .sparkle-effect {
-            position: absolute;
-            font-size: 1.8rem;
-            animation: pulse-glow 2s infinite;
+            cursor: pointer;
+            margin-top: 12px;
+            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.4);
         }
 
         .error-shake { animation: shake 0.4s ease-in-out; }
@@ -301,18 +206,13 @@ Here is the updated code! I have integrated all six of your real cats with their
 </head>
 <body>
 
-    <div class="twinkle-bg"></div>
-
-    <!-- SCREEN 1: PASSCODE -->
+    <!-- SCREEN 1: ACCESS CODE -->
     <div id="lock-screen" class="screen active">
         <div class="lock-container" id="lock-box">
-            <h2 style="color: var(--accent-color);">✨ Fairy Portal Access ✨</h2>
-            <p style="font-size: 0.85rem; opacity: 0.7; margin-top: 5px;">Enter the magic digits to begin</p>
+            <h2 style="color: var(--accent-color); margin-bottom: 5px;">✨ Fairy Portal Access ✨</h2>
+            <p style="font-size: 0.85rem; opacity: 0.7;">Enter Aranza's Secret Code</p>
             <div class="dots-container">
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
-                <div class="dot"></div>
+                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
             </div>
             <div class="keypad">
                 <button class="key" onclick="pressKey('1')">1</button>
@@ -324,246 +224,398 @@ Here is the updated code! I have integrated all six of your real cats with their
                 <button class="key" onclick="pressKey('7')">7</button>
                 <button class="key" onclick="pressKey('8')">8</button>
                 <button class="key" onclick="pressKey('9')">9</button>
-                <button class="key" style="font-size: 0.9rem; color: var(--accent-color);" onclick="clearCode()">Clear</button>
+                <button class="key" style="font-size: 0.85rem; color: var(--accent-color);" onclick="clearCode()">Clear</button>
                 <button class="key" onclick="pressKey('0')">0</button>
-                <button class="key" style="visibility: hidden;"></button>
             </div>
         </div>
     </div>
 
-    <!-- SCREEN 2: ADVENTURE MAP -->
+    <!-- SCREEN 2: 2D CORE PLATFORMER GAME -->
     <div id="game-screen" class="screen">
-        <div class="game-header">
-            <div class="avatar-badge">Character: 🧚‍♀️ Magic Fairy Aranza</div>
-            <h2 id="stage-title">The Enchanted Whispers</h2>
-            <p id="cat-counter" style="color: var(--magic-gold); font-weight: bold;">Cats Rescued: 0 / 6</p>
-        </div>
-        <div class="game-viewport" id="viewport">
-            <!-- Decorative Backdrops -->
-            <div class="fairy-dust" style="top: 15%; left: 8%;">🌸</div>
-            <div class="fairy-dust" style="top: 25%; right: 12%;">✨</div>
-            <div class="fairy-dust" style="bottom: 30%; left: 15%;">🍄</div>
-            <div class="fairy-dust" style="bottom: 15%; right: 8%;">🔮</div>
-
-            <!-- The Chest -->
-            <div id="magic-chest" class="chest" onclick="openChest()">🎁</div>
-
-            <!-- Item Unlocked Dialog -->
-            <div id="item-modal" class="modal">
-                <h3 id="modal-cat-name" style="color: var(--magic-gold); margin-bottom: 8px;">You Rescued a Cat!</h3>
-                <p id="modal-cat-desc">Cat description text...</p>
-                <button class="btn" id="modal-btn" onclick="nextStage()">Continue Journey ✨</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCREEN 3: MAGICAL TROPHY ROOM (THE REWARD) -->
-    <div id="trophy-screen" class="screen trophy-room">
-        <div class="game-header" style="margin-bottom: 0;">
-            <h1 style="color: var(--magic-gold); font-size: 2rem; text-shadow: 0 0 15px rgba(251,191,36,0.6);">✨ Chato & Aranza's Sanctuary ✨</h1>
-            <p style="color: var(--accent-color); font-weight: 500;">The ultimate magical trophy room</p>
-        </div>
-
-        <div class="room-grid">
-            <!-- Extra magical room details -->
-            <div class="sparkle-effect" style="top: 10%; left: 15%;">⭐</div>
-            <div class="sparkle-effect" style="top: 5%; right: 20%;">✨</div>
-            <div class="sparkle-effect" style="top: 40%; left: 5%;">🔮</div>
-            <div class="sparkle-effect" style="top: 35%; right: 5%;">👑</div>
-
-            <!-- Rescued Cats Hanging Out in the Room with Labels -->
-            <div class="cat-display" style="top: 12%; left: 20%;">
-                <div class="cat-emoji">🐱</div>
-                <div class="cat-label">Ameli</div>
-            </div>
-            <div class="cat-display" style="top: 22%; right: 22%;">
-                <div class="cat-emoji">🐈‍⬛</div>
-                <div class="cat-label">Shadow</div>
-            </div>
-            <div class="cat-display" style="bottom: 48%; left: 8%;">
-                <div class="cat-emoji">🦨</div>
-                <div class="cat-label">Silvie</div>
-            </div>
-            <div class="cat-display" style="bottom: 52%; right: 10%;">
-                <div class="cat-emoji">🐈</div>
-                <div class="cat-label">Gray</div>
-            </div>
-            <div class="cat-display" style="top: 45%; left: 45%;">
-                <div class="cat-emoji">🐅</div>
-                <div class="cat-label">La niña</div>
-            </div>
-            <div class="cat-display" style="bottom: 18%; left: 12%;">
-                <div class="cat-emoji">🦁</div>
-                <div class="cat-label">Neo</div>
+        <div class="game-wrapper">
+            <div class="game-header">
+                <div>🧚‍♀️ <span style="color: var(--accent-color); font-weight: bold;">Aranza</span></div>
+                <div id="level-display" style="color: var(--magic-gold); font-weight: bold;">Level 1/6</div>
+                <div id="objective-text">Rescue Ameli!</div>
             </div>
 
-            <!-- The Big Comfortable Bed -->
-            <div class="magic-bed">🛌✨</div>
+            <canvas id="gameCanvas" width="800" height="400"></canvas>
 
-            <!-- Characters -->
-            <div class="npc-chato" id="chato-npc" onclick="triggerFinalSurprise()">👦❤️</div>
-            <div class="player-aranza">🧚‍♀️🪄</div>
-        </div>
+            <!-- Touch Controls -->
+            <div class="controls-container">
+                <div style="display: flex; gap: 15px;">
+                    <div class="dpad-btn" id="btn-left">◀</div>
+                    <div class="dpad-btn" id="btn-right">▶</div>
+                </div>
+                <div class="dpad-btn" id="btn-jump" style="width: 90px; border-radius: 20px; font-weight: bold; font-size: 1.1rem;">JUMP</div>
+            </div>
 
-        <!-- Dialogue Box for Chato -->
-        <div id="chato-dialog" class="modal active" style="position: relative; bottom: 0; left: 0; right: 0; transform: none; background: rgba(15, 11, 42, 0.95);">
-            <h3 style="color: var(--magic-gold); margin-bottom: 5px;">Chato</h3>
-            <p id="chato-text">You found all 6 of our precious kittens, Aranza! Tap on me to claim your final big surprise... 💕</p>
-            <button class="btn" id="chato-action-btn" onclick="triggerFinalSurprise()">Talk to Chato</button>
+            <!-- Global Story Dialogue Popup Modals -->
+            <div id="story-dialogue" class="dialogue-overlay">
+                <h3 id="dialogue-title" style="color: var(--magic-gold); margin-bottom: 6px;">Cat Rescued!</h3>
+                <p id="dialogue-body">Story details go here...</p>
+                <button class="btn" id="dialogue-btn" onclick="closeDialogue()">Next Level ✨</button>
+            </div>
         </div>
     </div>
 
     <script>
-        // --- CONFIGURATION ---
-        const CORRECT_PASSCODE = "1234"; // Set your custom 4-digit code here
-
-        // The 6 magical chests, positions, and descriptions matching unique cats
-        const questStages = [
-            {
-                title: "The Pixie Glade",
-                chestEmoji: "🧳",
-                chestPos: { top: "45%", left: "45%" },
-                catName: "Ameli 🤎🖤",
-                desc: "You found Ameli, the gorgeous tortoiseshell! She was hidden safe and sound inside a swirling pixie vortex."
-            },
-            {
-                title: "The Starfall River",
-                chestEmoji: "🔮",
-                chestPos: { top: "30%", left: "65%" },
-                catName: "Shadow 🩶✨",
-                desc: "There's Shadow! The beautiful Blue (Gray) kitty, resting perfectly protected by moonbeams on the glowing shoreline."
-            },
-            {
-                title: "The Whispering Caverns",
-                chestEmoji: "🏴‍☠️",
-                chestPos: { top: "60%", left: "20%" },
-                catName: "Silvie 🖤🤍",
-                desc: "You discovered Silvie, the elegant Tuxedo cat, guarding a pile of glowing twilight crystals!"
-            },
-            {
-                title: "The Pastel Clouds",
-                chestEmoji: "📦",
-                chestPos: { top: "25%", left: "30%" },
-                catName: "Gray 🤍🩶",
-                desc: "Look up! It's Gray, the bicolored cutie with white on his bottom and soft gray across his back, floating happily on a dream cloud."
-            },
-            {
-                title: "The Crystal Gardens",
-                chestEmoji: "🌟",
-                chestPos: { top: "55%", left: "70%" },
-                catName: "La niña 🧡🤍🩶",
-                desc: "You found La niña! The lovely diluted calico, taking a cozy nap underneath a row of glowing magical flowers."
-            },
-            {
-                title: "The Twilight Spire",
-                chestEmoji: "👑",
-                chestPos: { top: "40%", left: "50%" },
-                catName: "Neo 💛✨",
-                desc: "And finally, Neo! The ultra-furry solid cream buff kitten, guarding the key to the ultimate sanctuary room."
-            }
+        // --- GAME SYSTEM CONFIG ---
+        const CORRECT_PASSCODE = "1234"; 
+        
+        const catLevels = [
+            { name: "Ameli", type: "Tortoiseshell Cat 🤎🖤", emoji: "🐱", details: "You found Ameli exploring the whispering woods safely!" },
+            { name: "Shadow", type: "Blue Gray Cat 🩶✨", emoji: "🐈‍⬛", details: "You found Shadow blending beautifully with the dark night valleys!" },
+            { name: "Silvie", type: "Tuxedo Cat 🖤🤍", emoji: "🦨", details: "You found Silvie looking sharp on top of the moving magic platforms!" },
+            { name: "Gray", type: "Bicolor Gray/White Cat 🤍🩶", emoji: "🐈", details: "You leaped over all the thorn hazards and rescued Gray!" },
+            { name: "La niña", type: "Diluted Calico Cat 🧡🤍", emoji: "🐅", details: "You tracked La niña all the way across the giant cosmic fields!" },
+            { name: "Neo", type: "Buff Solid Cream Cat 💛✨", emoji: "🦁", details: "You conquered the final puzzle level! Neo is safe!" }
         ];
 
-        // --- GAME SYSTEM STATE ---
         let currentCode = "";
-        let currentStageIndex = 0;
+        let currentLevel = 0;
+        let isGameRunning = false;
+        let inTrophyRoom = false;
 
-        // --- CODE CHECKER ---
+        // Camera scroll offset
+        let cameraX = 0;
+        const VIRTUAL_MAP_WIDTH = 2000; // Extra long level length for exploration
+
+        // --- PASSCODE LAYER ---
         function pressKey(num) {
             if (currentCode.length < 4) {
                 currentCode += num;
                 updateDots();
                 if (currentCode.length === 4) {
-                    setTimeout(checkPasscode, 300);
+                    setTimeout(() => {
+                        if (currentCode === CORRECT_PASSCODE) {
+                            document.getElementById('lock-screen').classList.remove('active');
+                            document.getElementById('game-screen').classList.add('active');
+                            startEngine();
+                        } else {
+                            document.getElementById('lock-box').classList.add('error-shake');
+                            setTimeout(() => {
+                                document.getElementById('lock-box').classList.remove('error-shake');
+                                clearCode();
+                            }, 400);
+                        }
+                    }, 250);
                 }
             }
         }
-
-        function clearCode() {
-            currentCode = "";
-            updateDots();
-        }
-
+        function clearCode() { currentCode = ""; updateDots(); }
         function updateDots() {
             const dots = document.querySelectorAll('.dot');
-            dots.forEach((dot, idx) => {
-                if (idx < currentCode.length) dot.classList.add('filled');
-                else dot.classList.remove('filled');
+            dots.forEach((d, idx) => d.style.background = idx < currentCode.length ? 'var(--accent-color)' : 'none');
+        }
+
+        // --- 2D CANVAS PHYSICS ENGINE ---
+        const canvas = document.getElementById("gameCanvas");
+        const ctx = canvas.getContext("2d");
+
+        // Player Avatar Configuration
+        const fairy = {
+            x: 50, y: 300, width: 32, height: 32,
+            vx: 0, vy: 0, isGrounded: false,
+            speed: 5, jumpForce: -11.5, gravity: 0.52
+        };
+
+        let platforms = [];
+        let obstacles = []; // Damage traps
+        let levelGoalCat = { x: 0, y: 0, width: 40, height: 40, emoji: "🐱" };
+
+        const input = { left: false, right: false, jump: false };
+
+        // Keyboard tracking
+        window.addEventListener("keydown", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") input.left = true;
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") input.right = true;
+            if (e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " ") input.jump = true;
+        });
+        window.addEventListener("keyup", (e) => {
+            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") input.left = false;
+            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") input.right = false;
+            if (e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " ") input.jump = false;
+        });
+
+        // Touch input mapping
+        function setupTouchBtn(id, targetProp) {
+            const btn = document.getElementById(id);
+            btn.addEventListener("touchstart", (e) => { e.preventDefault(); input[targetProp] = true; });
+            btn.addEventListener("touchend", (e) => { e.preventDefault(); input[targetProp] = false; });
+            btn.addEventListener("mousedown", () => input[targetProp] = true);
+            btn.addEventListener("mouseup", () => input[targetProp] = false);
+        }
+        setupTouchBtn("btn-left", "left");
+        setupTouchBtn("btn-right", "right");
+        setupTouchBtn("btn-jump", "jump");
+
+        // --- PROC-LEVEL BUILDER SYSTEM ---
+        function loadLevel(idx) {
+            fairy.x = 60; fairy.y = 200;
+            fairy.vx = 0; fairy.vy = 0;
+            cameraX = 0;
+            
+            if (idx < 6) {
+                inTrophyRoom = false;
+                document.getElementById('level-display').innerText = `Level ${idx + 1}/6`;
+                document.getElementById('objective-text').innerText = `Rescue ${catLevels[idx].name}!`;
+                levelGoalCat.emoji = catLevels[idx].emoji;
+
+                // Base floors across map length
+                platforms = [
+                    { x: 0, y: 370, w: 400, h: 30, type: 'static' },
+                    { x: 550, y: 370, w: 500, h: 30, type: 'static' },
+                    { x: 1200, y: 370, w: 800, h: 30, type: 'static' }
+                ];
+
+                // Obstacles setup
+                obstacles = [
+                    { x: 700, y: 345, w: 40, h: 25 },
+                    { x: 1350, y: 345, w: 50, h: 25 }
+                ];
+
+                // Level-specific progressive scaling & layout generation
+                if (idx >= 1) { // Introducing elevated steps
+                    platforms.push({ x: 250, y: 280, w: 120, h: 15, type: 'static' });
+                    platforms.push({ x: 1100, y: 290, w: 140, h: 15, type: 'static' });
+                }
+                if (idx >= 2) { // Introducing horizontal moving platforms
+                    platforms.push({ x: 420, y: 250, w: 100, h: 15, type: 'moving', startX: 420, range: 100, dir: 1, speed: 1.5 });
+                    platforms.push({ x: 1060, y: 210, w: 110, h: 15, type: 'moving', startX: 1060, range: 120, dir: -1, speed: 2 });
+                }
+                if (idx >= 3) { // Increasing hazards
+                    obstacles.push({ x: 280, y: 260, w: 30, h: 20 });
+                    obstacles.push({ x: 1500, y: 345, w: 60, h: 25 });
+                }
+                if (idx >= 4) { // Massive exploration jumps
+                    platforms.push({ x: 1600, y: 240, w: 150, h: 15, type: 'static' });
+                    obstacles.push({ x: 1650, y: 220, w: 40, h: 20 });
+                }
+                if (idx === 5) { // Maximum difficulty final gauntlet
+                    platforms.push({ x: 800, y: 190, w: 100, h: 15, type: 'moving', startX: 800, range: 150, dir: 1, speed: 3 });
+                    obstacles.push({ x: 1800, y: 345, w: 40, h: 25 });
+                }
+
+                // Place target kitten safely at the absolute end of the long scrolled map
+                levelGoalCat.x = 1880;
+                levelGoalCat.y = 310;
+                // Double check it has a platform directly under it
+                platforms.push({ x: 1850, y: 350, w: 150, h: 20, type: 'static' });
+
+            } else {
+                inTrophyRoom = true;
+                document.getElementById('level-display').innerText = "Sanctuary 👑";
+                document.getElementById('objective-text').innerText = "Walk over to Chato!";
+                platforms = [{ x: 0, y: 370, w: 800, h: 30, type: 'static' }]; 
+                obstacles = [];
+            }
+        }
+
+        function startEngine() {
+            isGameRunning = true;
+            loadLevel(0);
+            requestAnimationFrame(updateLoop);
+        }
+
+        // --- SYSTEM ENGINE RUN TIME ---
+        function updateLoop() {
+            if (!isGameRunning) return;
+
+            // X Physics Execution
+            if (input.left) fairy.vx = -fairy.speed;
+            else if (input.right) fairy.vx = fairy.speed;
+            else fairy.vx *= 0.8; 
+
+            fairy.vy += fairy.gravity;
+            
+            fairy.x += fairy.vx;
+            fairy.y += fairy.vy;
+
+            // Left boundary lock
+            if (fairy.x < 0) fairy.x = 0;
+            
+            // Right map limit check
+            let maxMapW = inTrophyRoom ? 800 : VIRTUAL_MAP_WIDTH;
+            if (fairy.x > maxMapW - fairy.width) fairy.x = maxMapW - fairy.width;
+
+            // Camera engine follow system tracking player position
+            if (!inTrophyRoom) {
+                cameraX = fairy.x - canvas.width / 4;
+                if (cameraX < 0) cameraX = 0;
+                if (cameraX > VIRTUAL_MAP_WIDTH - canvas.width) cameraX = VIRTUAL_MAP_WIDTH - canvas.width;
+            } else {
+                cameraX = 0;
+            }
+
+            // Processing Moving Platform Paths
+            platforms.forEach(p => {
+                if (p.type === 'moving') {
+                    p.x += p.speed * p.dir;
+                    if (Math.abs(p.x - p.startX) > p.range) {
+                        p.dir *= -1; // Reverse directional trajectory
+                    }
+                }
             });
-        }
 
-        function checkPasscode() {
-            if (currentCode === CORRECT_PASSCODE) {
-                switchScreen('lock-screen', 'game-screen');
-                initStage();
-            } else {
-                const box = document.getElementById('lock-box');
-                box.classList.add('error-shake');
-                setTimeout(() => {
-                    box.classList.remove('error-shake');
-                    clearCode();
-                }, 400);
+            // Platform Ground Collision tracking
+            fairy.isGrounded = false;
+            platforms.forEach(p => {
+                if (fairy.x + fairy.width > p.x && fairy.x < p.x + p.w &&
+                    fairy.y + fairy.height > p.y && fairy.y + fairy.height - fairy.vy <= p.y + 12) {
+                    fairy.y = p.y - fairy.height;
+                    fairy.vy = 0;
+                    fairy.isGrounded = true;
+                    
+                    // If standing on a moving platform, carry the player along with its speed
+                    if (p.type === 'moving') {
+                        fairy.x += p.speed * p.dir;
+                    }
+                }
+            });
+
+            // Jump Action Trigger
+            if (input.jump && fairy.isGrounded) {
+                fairy.vy = fairy.jumpForce;
+                fairy.isGrounded = false;
             }
-        }
 
-        // --- NAVIGATION & ENGINE ---
-        function switchScreen(from, to) {
-            document.getElementById(from).classList.remove('active');
-            document.getElementById(to).classList.add('active');
-        }
-
-        function initStage() {
-            const data = questStages[currentStageIndex];
-            
-            document.getElementById('stage-title').innerText = `Stage ${currentStageIndex + 1}: ${data.title}`;
-            document.getElementById('cat-counter').innerText = `Cats Rescued: ${currentStageIndex} / ${questStages.length}`;
-            
-            const chest = document.getElementById('magic-chest');
-            chest.innerText = data.chestEmoji;
-            chest.style.top = data.chestPos.top;
-            chest.style.left = data.chestPos.left;
-            chest.style.display = 'block';
-            
-            document.getElementById('item-modal').classList.remove('active');
-        }
-
-        function openChest() {
-            const data = questStages[currentStageIndex];
-            document.getElementById('magic-chest').style.display = 'none';
-            
-            document.getElementById('modal-cat-name').innerText = `Rescued: ${data.catName}`;
-            document.getElementById('modal-cat-desc').innerText = data.desc;
-            
-            const btn = document.getElementById('modal-btn');
-            if (currentStageIndex === questStages.length - 1) {
-                btn.innerText = "Enter the Trophy Room 👑✨";
-            } else {
-                btn.innerText = "Continue Journey ✨";
+            // Pitfall Fall Condition (falling down open gaps)
+            if (fairy.y > canvas.height) {
+                resetPlayerOnDamage();
             }
-            
-            document.getElementById('item-modal').classList.add('active');
-        }
 
-        function nextStage() {
-            currentStageIndex++;
-            if (currentStageIndex < questStages.length) {
-                initStage();
+            // Processing Hazard Obstacle Damage Overlays
+            obstacles.forEach(o => {
+                if (fairy.x + fairy.width > o.x && fairy.x < o.x + o.w &&
+                    fairy.y + fairy.height > o.y && fairy.y < o.y + o.h) {
+                    resetPlayerOnDamage();
+                }
+            });
+
+            // Clear Screen Frame
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.save();
+            // Translate drawing system relative to current side-scrolling camera window
+            ctx.translate(-cameraX, 0);
+
+            if (inTrophyRoom) {
+                // Sanctuary Room Visual Scene Rendering
+                let grad = ctx.createLinearGradient(0,0,0,400);
+                grad.addColorStop(0, "#2e1065"); grad.addColorStop(1, "#0f0521");
+                ctx.fillStyle = grad; ctx.fillRect(0,0,800,400);
+                
+                // Draw Giant Bed
+                ctx.font = "65px Arial"; ctx.fillText("🛌✨", 360, 365);
+
+                // Display kittens comfortably around the room
+                ctx.font = "30px Arial";
+                ctx.fillText("🐱", 120, 365); 
+                ctx.fillText("🐈‍⬛", 220, 365); 
+                ctx.fillText("🦨", 310, 365); 
+                ctx.fillText("🐈", 480, 365); 
+                ctx.fillText("🐅", 570, 365); 
+                ctx.fillText("🦁", 670, 365); 
+
+                // NPC Chato
+                ctx.font = "45px Arial"; ctx.fillText("👦❤️", 260, 365);
+
+                // Check finish proximity
+                if (Math.abs(fairy.x - 260) < 45) {
+                    isGameRunning = false;
+                    triggerFinalTrophySurprise();
+                }
             } else {
-                switchScreen('game-screen', 'trophy-screen');
+                // Background Ambient Details
+                ctx.fillStyle = "rgba(244, 114, 182, 0.08)";
+                for(let i=0; i<35; i++) {
+                    let starX = (i * 73) % VIRTUAL_MAP_WIDTH;
+                    let starY = (i * 37) % 250;
+                    ctx.fillRect(starX, starY, 3, 3);
+                }
+
+                // Render Platforms
+                platforms.forEach(p => {
+                    ctx.fillStyle = p.type === 'moving' ? "#6d28d9" : "#4c1d95";
+                    ctx.fillRect(p.x, p.y, p.w, p.h);
+                    
+                    // Top glowing neon accent line
+                    ctx.fillStyle = "rgba(244, 114, 182, 0.6)";
+                    ctx.fillRect(p.x, p.y, p.w, 4);
+                });
+
+                // Render Spikes/Obstacles
+                ctx.fillStyle = "var(--danger-color)";
+                obstacles.forEach(o => {
+                    ctx.beginPath();
+                    ctx.moveTo(o.x, o.y + o.h);
+                    ctx.lineTo(o.x + o.w/2, o.y);
+                    ctx.lineTo(o.x + o.w, o.y + o.h);
+                    ctx.fill();
+                    // Sparkle indicator over hazard points
+                    ctx.font = "10px Arial";
+                    ctx.fillText("⚡", o.x + o.w/4, o.y - 2);
+                });
+
+                // Draw Goal Cat
+                ctx.font = "34px Arial";
+                ctx.fillText(levelGoalCat.emoji, levelGoalCat.x, levelGoalCat.y + 28);
+
+                // Check win intersection
+                if (fairy.x + fairy.width > levelGoalCat.x && fairy.x < levelGoalCat.x + levelGoalCat.width &&
+                    fairy.y + fairy.height > levelGoalCat.y && fairy.y < levelGoalCat.y + levelGoalCat.height) {
+                    isGameRunning = false;
+                    triggerLevelCompletedPopup();
+                }
             }
+
+            // Render Player Avatar (Aranza the Fairy)
+            ctx.font = "32px Arial";
+            ctx.fillText("🧚‍♀️", fairy.x, fairy.y + 28);
+
+            ctx.restore();
+            requestAnimationFrame(updateLoop);
         }
 
-        // --- FINAL SURPRISE IN THE TROPHY ROOM ---
-        function triggerFinalSurprise() {
-            const textBox = document.getElementById('chato-text');
-            const actionBtn = document.getElementById('chato-action-btn');
+        // Safety checkpoint function when hitting spikes
+        function resetPlayerOnDamage() {
+            fairy.x = 60;
+            fairy.y = 200;
+            fairy.vx = 0;
+            fairy.vy = 0;
+        }
+
+        // --- POPUP AND DIALOGUE WINDOW MODALS ---
+        function triggerLevelCompletedPopup() {
+            const data = catLevels[currentLevel];
+            const modal = document.getElementById("story-dialogue");
             
-            // The grand dialogue speech from you!
-            textBox.innerHTML = "✨ <strong>Aranza, you did it!</strong> ✨<br><br>Welcome to our magical sanctuary. Ameli, Shadow, Silvie, Gray, La niña, and Neo are all safe here home with us now! Just like you rescued them, your love makes my world a more beautiful and magical place every single day. Thank you for being my magic fairy. I love you to the stars and back! ❤️";
+            document.getElementById("dialogue-title").innerText = `Rescued: ${data.name}! 🎉`;
+            document.getElementById("dialogue-body").innerText = `${data.details} (${data.type})`;
             
-            actionBtn.style.display = 'none';
+            const btn = document.getElementById("dialogue-btn");
+            btn.innerText = currentLevel === 5 ? "Enter the Trophy Room 👑✨" : "Next Level ✨";
+            
+            modal.style.display = "block";
+        }
+
+        function closeDialogue() {
+            document.getElementById("story-dialogue").style.display = "none";
+            currentLevel++;
+            isGameRunning = true;
+            loadLevel(currentLevel);
+            if (currentLevel <= 6) updateLoop();
+        }
+
+        function triggerFinalTrophySurprise() {
+            const modal = document.getElementById("story-dialogue");
+            document.getElementById("dialogue-title").innerText = "💬 Chato says:";
+            document.getElementById("dialogue-body").innerHTML = "✨ <strong>Aranza, you did it!</strong> ✨<br><br>Welcome to our magical sanctuary. Ameli, Shadow, Silvie, Gray, La niña, and Neo are all safe and cozy here with us now! Just like you rescued them in this game, your beautiful presence rescues my day, every single day. Thank you for going on this adventure with me. I love you to the stars and back! ❤️";
+            
+            document.getElementById("dialogue-btn").style.display = "none"; 
+            modal.style.display = "block";
         }
     </script>
 </body>
 </html>
-
-```
