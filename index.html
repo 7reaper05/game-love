@@ -2,620 +2,169 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Aranza's 2D Magical Quest</title>
+    <title>Aranza & Chato: The Complete Journey</title>
     <style>
-        :root {
-            --bg-color: #0c0a1c;
-            --accent-color: #f472b6;
-            --magic-gold: #fbbf24;
-            --text-color: #f8fafc;
-            --danger-color: #a855f7;
+        body { 
+            margin: 0; 
+            background: #2b1f15; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            height: 100vh; 
+            overflow: hidden; 
+            font-family: Georgia, serif; 
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            user-select: none;
-            -webkit-user-select: none;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        body, html {
-            width: 100%;
-            height: 100%;
-            background-color: var(--bg-color);
-            color: var(--text-color);
-            overflow: hidden;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .screen {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            max-width: 1024px;
-            max-height: 700px;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            padding: 15px;
-            transition: opacity 0.5s ease;
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .screen.active {
-            opacity: 1;
-            pointer-events: auto;
-        }
-
-        /* Passcode Lock Setup */
-        .lock-container {
-            background: rgba(30, 27, 75, 0.85);
-            border: 2px solid var(--accent-color);
-            backdrop-filter: blur(10px);
-            padding: 30px;
-            border-radius: 24px;
-            text-align: center;
-            width: 90%;
-            max-width: 350px;
-            box-shadow: 0 0 30px rgba(244, 114, 182, 0.2);
-        }
-
-        .dots-container {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            margin: 20px 0;
-        }
-
-        .dot {
-            width: 16px;
-            height: 16px;
-            border: 2px solid var(--accent-color);
-            border-radius: 50%;
-        }
-
-        .dot.filled {
-            background: var(--accent-color);
-            box-shadow: 0 0 10px var(--accent-color);
-        }
-
-        .keypad {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr);
-            gap: 12px;
-        }
-
-        .key {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            color: var(--text-color);
-            font-size: 1.3rem;
-            padding: 12px 0;
-            border-radius: 50%;
-            aspect-ratio: 1;
-            cursor: pointer;
-        }
-
-        .key:active {
-            background: var(--accent-color);
-            color: #000;
-        }
-
-        /* 2D Canvas Engine Setup */
-        .game-wrapper {
-            position: relative;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .game-header {
-            width: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 8px 12px;
-            background: rgba(255,255,255,0.05);
-            border-radius: 12px;
-            margin-bottom: 8px;
-        }
-
-        #gameCanvas {
-            background: linear-gradient(180deg, #120b2e 0%, #05020a 100%);
-            border: 2px solid var(--accent-color);
-            border-radius: 16px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-            width: 100%;
-            max-height: 400px;
-            aspect-ratio: 2 / 1;
-        }
-
-        /* Controls for iPad/Touch interaction */
-        .controls-container {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            max-width: 600px;
-            margin-top: 15px;
-            padding: 0 20px;
-        }
-
-        .dpad-btn {
-            background: rgba(255, 255, 255, 0.1);
-            border: 2px solid rgba(255, 255, 255, 0.2);
-            color: white;
-            font-size: 2rem;
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-        }
-
-        .dpad-btn:active {
-            background: var(--accent-color);
-        }
-
-        /* Dialogue Box overlay system */
-        .dialogue-overlay {
-            position: absolute;
-            bottom: 110px;
-            left: 5%;
-            right: 5%;
-            background: rgba(13, 10, 36, 0.98);
-            border: 2px solid var(--magic-gold);
-            padding: 20px;
-            border-radius: 16px;
-            text-align: center;
-            display: none;
-            box-shadow: 0 0 25px rgba(0,0,0,0.8);
-            z-index: 10;
-        }
-
-        .btn {
-            background: linear-gradient(135deg, var(--accent-color) 0%, #db2777 100%);
-            color: white;
-            border: none;
-            padding: 10px 24px;
-            font-weight: bold;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 12px;
-            box-shadow: 0 4px 12px rgba(244, 114, 182, 0.4);
-        }
-
-        .error-shake { animation: shake 0.4s ease-in-out; }
-        @keyframes shake {
-            0%, 100% { transform: translateX(0); }
-            20%, 60% { transform: translateX(-8px); }
-            40%, 80% { transform: translateX(8px); }
+        #gameCanvas { 
+            background: #f4ebd8; 
+            border: 4px solid #b8860b; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8); 
         }
     </style>
 </head>
 <body>
 
-    <!-- SCREEN 1: ACCESS CODE -->
-    <div id="lock-screen" class="screen active">
-        <div class="lock-container" id="lock-box">
-            <h2 style="color: var(--accent-color); margin-bottom: 5px;">✨ Fairy Portal Access ✨</h2>
-            <p style="font-size: 0.85rem; opacity: 0.7;">Enter Aranza's Secret Code</p>
-            <div class="dots-container">
-                <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
-            </div>
-            <div class="keypad">
-                <button class="key" onclick="pressKey('1')">1</button>
-                <button class="key" onclick="pressKey('2')">2</button>
-                <button class="key" onclick="pressKey('3')">3</button>
-                <button class="key" onclick="pressKey('4')">4</button>
-                <button class="key" onclick="pressKey('5')">5</button>
-                <button class="key" onclick="pressKey('6')">6</button>
-                <button class="key" onclick="pressKey('7')">7</button>
-                <button class="key" onclick="pressKey('8')">8</button>
-                <button class="key" onclick="pressKey('9')">9</button>
-                <button class="key" style="font-size: 0.85rem; color: var(--accent-color);" onclick="clearCode()">Clear</button>
-                <button class="key" onclick="pressKey('0')">0</button>
-            </div>
-        </div>
-    </div>
+<canvas id="gameCanvas" width="800" height="400"></canvas>
 
-    <!-- SCREEN 2: 2D CORE PLATFORMER GAME -->
-    <div id="game-screen" class="screen">
-        <div class="game-wrapper">
-            <div class="game-header">
-                <div>🧚‍♀️ <span style="color: var(--accent-color); font-weight: bold;">Aranza</span></div>
-                <div id="level-display" style="color: var(--magic-gold); font-weight: bold;">Level 1/6</div>
-                <div id="objective-text">Rescue Ameli!</div>
-            </div>
+<script>
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
 
-            <canvas id="gameCanvas" width="800" height="400"></canvas>
+    // --- 1. ASSET CONFIGURATION ---
+    // The "frames" numbers here match the high-quality sprite sheets we discussed.
+    const assets = {
+        bg: { img: new Image(), src: 'assets/parchment_bg.png' },
+        fairy_fly: { img: new Image(), frames: 12, src: 'assets/aranza_fly.png' },
+        fairy_pickup: { img: new Image(), frames: 8, src: 'assets/aranza_pickup.png' },
+        chato: { img: new Image(), frames: 10, src: 'assets/chato_wave.png' }
+    };
+    
+    // Dynamically load the 6 cats and set their frame counts
+    const catLibrary = ["ameli", "shadow", "silvie", "gray", "lanina", "neo"];
+    catLibrary.forEach((name, i) => {
+        // Sleep animation (6 frames), Stand/Wag animation (8 frames)
+        assets['c' + i + '_s'] = { img: new Image(), frames: 6, src: `assets/${name}_sleep.png` };
+        assets['c' + i + '_w'] = { img: new Image(), frames: 8, src: `assets/${name}_stand.png` };
+    });
+    
+    // Tell the browser to load all the image paths we just set up
+    Object.values(assets).forEach(a => { if(a.src) a.img.src = a.src; });
 
-            <!-- Touch Controls -->
-            <div class="controls-container">
-                <div style="display: flex; gap: 15px;">
-                    <div class="dpad-btn" id="btn-left">◀</div>
-                    <div class="dpad-btn" id="btn-right">▶</div>
-                </div>
-                <div class="dpad-btn" id="btn-jump" style="width: 90px; border-radius: 20px; font-weight: bold; font-size: 1.1rem;">JUMP</div>
-            </div>
+    // --- 2. GAME STATE ---
+    let time = 0;
+    let isPickingUp = false;
+    let currentLevel = 0; // 0-5 are the cats, 6 is the Sanctuary
+    
+    // Aranza's physics variables
+    const fairy = { x: 80, y: 150, vx: 0, vy: 0 };
+    
+    // Input tracking
+    const input = { left: false, right: false, up: false, down: false };
 
-            <!-- Global Story Dialogue Popup Modals -->
-            <div id="story-dialogue" class="dialogue-overlay">
-                <h3 id="dialogue-title" style="color: var(--magic-gold); margin-bottom: 6px;">Cat Rescued!</h3>
-                <p id="dialogue-body">Story details go here...</p>
-                <button class="btn" id="dialogue-btn" onclick="closeDialogue()">Next Level ✨</button>
-            </div>
-        </div>
-    </div>
+    window.addEventListener("keydown", e => { 
+        if(e.key === "ArrowLeft" || e.key === "a") input.left = true;
+        if(e.key === "ArrowRight" || e.key === "d") input.right = true;
+        if(e.key === "ArrowUp" || e.key === "w") input.up = true;
+        if(e.key === "ArrowDown" || e.key === "s") input.down = true;
+    });
+    window.addEventListener("keyup", e => { 
+        if(e.key === "ArrowLeft" || e.key === "a") input.left = false;
+        if(e.key === "ArrowRight" || e.key === "d") input.right = false;
+        if(e.key === "ArrowUp" || e.key === "w") input.up = false;
+        if(e.key === "ArrowDown" || e.key === "s") input.down = false;
+    });
 
-    <script>
-        // --- GAME SYSTEM CONFIG ---
-        const CORRECT_PASSCODE = "1234"; 
+    // --- 3. RENDERING ENGINE ---
+    function drawSprite(asset, x, y, w, h) {
+        if(!asset.img.complete || asset.img.naturalWidth === 0) return;
         
-        const catLevels = [
-            { name: "Ameli", type: "Tortoiseshell Cat 🤎🖤", emoji: "🐱", details: "You found Ameli exploring the whispering woods safely!" },
-            { name: "Shadow", type: "Blue Gray Cat 🩶✨", emoji: "🐈‍⬛", details: "You found Shadow blending beautifully with the dark night valleys!" },
-            { name: "Silvie", type: "Tuxedo Cat 🖤🤍", emoji: "🦨", details: "You found Silvie looking sharp on top of the moving magic platforms!" },
-            { name: "Gray", type: "Bicolor Gray/White Cat 🤍🩶", emoji: "🐈", details: "You leaped over all the thorn hazards and rescued Gray!" },
-            { name: "La niña", type: "Diluted Calico Cat 🧡🤍", emoji: "🐅", details: "You tracked La niña all the way across the giant cosmic fields!" },
-            { name: "Neo", type: "Buff Solid Cream Cat 💛✨", emoji: "🦁", details: "You conquered the final puzzle level! Neo is safe!" }
-        ];
+        // Division by 12 controls the animation speed. Higher = slower/smoother.
+        let frame = Math.floor(time / 12) % asset.frames;
+        let frameW = asset.img.width / asset.frames;
+        
+        ctx.drawImage(asset.img, frame * frameW, 0, frameW, asset.img.height, x, y, w, h);
+    }
 
-        let currentCode = "";
-        let currentLevel = 0;
-        let isGameRunning = false;
-        let inTrophyRoom = false;
-
-        // Camera scroll offset
-        let cameraX = 0;
-        const VIRTUAL_MAP_WIDTH = 2000; // Extra long level length for exploration
-
-        // --- PASSCODE LAYER ---
-        function pressKey(num) {
-            if (currentCode.length < 4) {
-                currentCode += num;
-                updateDots();
-                if (currentCode.length === 4) {
-                    setTimeout(() => {
-                        if (currentCode === CORRECT_PASSCODE) {
-                            document.getElementById('lock-screen').classList.remove('active');
-                            document.getElementById('game-screen').classList.add('active');
-                            startEngine();
-                        } else {
-                            document.getElementById('lock-box').classList.add('error-shake');
-                            setTimeout(() => {
-                                document.getElementById('lock-box').classList.remove('error-shake');
-                                clearCode();
-                            }, 400);
-                        }
-                    }, 250);
-                }
-            }
-        }
-        function clearCode() { currentCode = ""; updateDots(); }
-        function updateDots() {
-            const dots = document.querySelectorAll('.dot');
-            dots.forEach((d, idx) => d.style.background = idx < currentCode.length ? 'var(--accent-color)' : 'none');
+    // --- 4. MAIN GAME LOOP ---
+    function loop() {
+        time++;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        // Draw the moving parchment background
+        if (assets.bg.img.complete) {
+            ctx.drawImage(assets.bg.img, 0, 0, canvas.width, canvas.height);
         }
 
-        // --- 2D CANVAS PHYSICS ENGINE ---
-        const canvas = document.getElementById("gameCanvas");
-        const ctx = canvas.getContext("2d");
-
-        // Player Avatar Configuration
-        const fairy = {
-            x: 50, y: 300, width: 32, height: 32,
-            vx: 0, vy: 0, isGrounded: false,
-            speed: 5, jumpForce: -11.5, gravity: 0.52
-        };
-
-        let platforms = [];
-        let obstacles = []; // Damage traps
-        let levelGoalCat = { x: 0, y: 0, width: 40, height: 40, emoji: "🐱" };
-
-        const input = { left: false, right: false, jump: false };
-
-        // Keyboard tracking
-        window.addEventListener("keydown", (e) => {
-            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") input.left = true;
-            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") input.right = true;
-            if (e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " ") input.jump = true;
-        });
-        window.addEventListener("keyup", (e) => {
-            if (e.key === "ArrowLeft" || e.key === "a" || e.key === "A") input.left = false;
-            if (e.key === "ArrowRight" || e.key === "d" || e.key === "D") input.right = false;
-            if (e.key === "ArrowUp" || e.key === "w" || e.key === "W" || e.key === " ") input.jump = false;
-        });
-
-        // Touch input mapping
-        function setupTouchBtn(id, targetProp) {
-            const btn = document.getElementById(id);
-            btn.addEventListener("touchstart", (e) => { e.preventDefault(); input[targetProp] = true; });
-            btn.addEventListener("touchend", (e) => { e.preventDefault(); input[targetProp] = false; });
-            btn.addEventListener("mousedown", () => input[targetProp] = true);
-            btn.addEventListener("mouseup", () => input[targetProp] = false);
-        }
-        setupTouchBtn("btn-left", "left");
-        setupTouchBtn("btn-right", "right");
-        setupTouchBtn("btn-jump", "jump");
-
-        // --- PROC-LEVEL BUILDER SYSTEM ---
-        function loadLevel(idx) {
-            fairy.x = 60; fairy.y = 200;
-            fairy.vx = 0; fairy.vy = 0;
-            cameraX = 0;
+        // --- PHYSICS: GLIDING MOVEMENT ---
+        if (!isPickingUp && currentLevel < 6) {
+            let targetVx = (input.right ? 5 : 0) - (input.left ? 5 : 0);
+            let targetVy = (input.down ? 5 : 0) - (input.up ? 5 : 0);
             
-            if (idx < 6) {
-                inTrophyRoom = false;
-                document.getElementById('level-display').innerText = `Level ${idx + 1}/6`;
-                document.getElementById('objective-text').innerText = `Rescue ${catLevels[idx].name}!`;
-                levelGoalCat.emoji = catLevels[idx].emoji;
-
-                // Base floors across map length
-                platforms = [
-                    { x: 0, y: 370, w: 400, h: 30, type: 'static' },
-                    { x: 550, y: 370, w: 500, h: 30, type: 'static' },
-                    { x: 1200, y: 370, w: 800, h: 30, type: 'static' }
-                ];
-
-                // Obstacles setup
-                obstacles = [
-                    { x: 700, y: 345, w: 40, h: 25 },
-                    { x: 1350, y: 345, w: 50, h: 25 }
-                ];
-
-                // Level-specific progressive scaling & layout generation
-                if (idx >= 1) { // Introducing elevated steps
-                    platforms.push({ x: 250, y: 280, w: 120, h: 15, type: 'static' });
-                    platforms.push({ x: 1100, y: 290, w: 140, h: 15, type: 'static' });
-                }
-                if (idx >= 2) { // Introducing horizontal moving platforms
-                    platforms.push({ x: 420, y: 250, w: 100, h: 15, type: 'moving', startX: 420, range: 100, dir: 1, speed: 1.5 });
-                    platforms.push({ x: 1060, y: 210, w: 110, h: 15, type: 'moving', startX: 1060, range: 120, dir: -1, speed: 2 });
-                }
-                if (idx >= 3) { // Increasing hazards
-                    obstacles.push({ x: 280, y: 260, w: 30, h: 20 });
-                    obstacles.push({ x: 1500, y: 345, w: 60, h: 25 });
-                }
-                if (idx >= 4) { // Massive exploration jumps
-                    platforms.push({ x: 1600, y: 240, w: 150, h: 15, type: 'static' });
-                    obstacles.push({ x: 1650, y: 220, w: 40, h: 20 });
-                }
-                if (idx === 5) { // Maximum difficulty final gauntlet
-                    platforms.push({ x: 800, y: 190, w: 100, h: 15, type: 'moving', startX: 800, range: 150, dir: 1, speed: 3 });
-                    obstacles.push({ x: 1800, y: 345, w: 40, h: 25 });
-                }
-
-                // Place target kitten safely at the absolute end of the long scrolled map
-                levelGoalCat.x = 1880;
-                levelGoalCat.y = 310;
-                // Double check it has a platform directly under it
-                platforms.push({ x: 1850, y: 350, w: 150, h: 20, type: 'static' });
-
-            } else {
-                inTrophyRoom = true;
-                document.getElementById('level-display').innerText = "Sanctuary 👑";
-                document.getElementById('objective-text').innerText = "Walk over to Chato!";
-                platforms = [{ x: 0, y: 370, w: 800, h: 30, type: 'static' }]; 
-                obstacles = [];
-            }
-        }
-
-        function startEngine() {
-            isGameRunning = true;
-            loadLevel(0);
-            requestAnimationFrame(updateLoop);
-        }
-
-        // --- SYSTEM ENGINE RUN TIME ---
-        function updateLoop() {
-            if (!isGameRunning) return;
-
-            // X Physics Execution
-            if (input.left) fairy.vx = -fairy.speed;
-            else if (input.right) fairy.vx = fairy.speed;
-            else fairy.vx *= 0.8; 
-
-            fairy.vy += fairy.gravity;
-            
+            // The "0.1" here is the gliding weight. It makes her float smoothly.
+            fairy.vx += (targetVx - fairy.vx) * 0.1;
+            fairy.vy += (targetVy - fairy.vy) * 0.1;
             fairy.x += fairy.vx;
             fairy.y += fairy.vy;
 
-            // Left boundary lock
-            if (fairy.x < 0) fairy.x = 0;
+            // Keep Aranza inside the screen bounds
+            fairy.x = Math.max(0, Math.min(canvas.width - 70, fairy.x));
+            fairy.y = Math.max(0, Math.min(canvas.height - 80, fairy.y));
+        }
+
+        // --- LEVEL LOGIC ---
+        if (currentLevel < 6) {
+            let catX = 650;
+            let catY = 220;
+            let distToCat = Math.hypot(fairy.x - catX, fairy.y - catY);
             
-            // Right map limit check
-            let maxMapW = inTrophyRoom ? 800 : VIRTUAL_MAP_WIDTH;
-            if (fairy.x > maxMapW - fairy.width) fairy.x = maxMapW - fairy.width;
-
-            // Camera engine follow system tracking player position
-            if (!inTrophyRoom) {
-                cameraX = fairy.x - canvas.width / 4;
-                if (cameraX < 0) cameraX = 0;
-                if (cameraX > VIRTUAL_MAP_WIDTH - canvas.width) cameraX = VIRTUAL_MAP_WIDTH - canvas.width;
-            } else {
-                cameraX = 0;
-            }
-
-            // Processing Moving Platform Paths
-            platforms.forEach(p => {
-                if (p.type === 'moving') {
-                    p.x += p.speed * p.dir;
-                    if (Math.abs(p.x - p.startX) > p.range) {
-                        p.dir *= -1; // Reverse directional trajectory
-                    }
-                }
-            });
-
-            // Platform Ground Collision tracking
-            fairy.isGrounded = false;
-            platforms.forEach(p => {
-                if (fairy.x + fairy.width > p.x && fairy.x < p.x + p.w &&
-                    fairy.y + fairy.height > p.y && fairy.y + fairy.height - fairy.vy <= p.y + 12) {
-                    fairy.y = p.y - fairy.height;
+            // 1. Pickup Sequence
+            if (distToCat < 45 && !isPickingUp) {
+                isPickingUp = true;
+                // Pause for 2 seconds to play the "Pickup" animation, then advance level
+                setTimeout(() => { 
+                    isPickingUp = false; 
+                    currentLevel++; 
+                    fairy.x = 80; // Reset Aranza to the left side
+                    fairy.y = 150;
+                    fairy.vx = 0;
                     fairy.vy = 0;
-                    fairy.isGrounded = true;
-                    
-                    // If standing on a moving platform, carry the player along with its speed
-                    if (p.type === 'moving') {
-                        fairy.x += p.speed * p.dir;
-                    }
-                }
+                }, 2000); 
+            }
+
+            // 2. Proximity Engine: Draw Sleep vs Stand
+            let catState = distToCat < 200 ? assets['c'+currentLevel+'_w'] : assets['c'+currentLevel+'_s'];
+            drawSprite(catState, catX, catY, 70, 70);
+            
+        } else {
+            // --- THE SANCTUARY (FINAL ROOM) ---
+            // Draw Chato waving
+            drawSprite(assets.chato, 620, 180, 100, 130);
+            
+            // Draw all 6 collected cats lined up
+            catLibrary.forEach((_, i) => {
+                drawSprite(assets['c' + i + '_w'], 50 + (i * 90), 280, 60, 60);
             });
 
-            // Jump Action Trigger
-            if (input.jump && fairy.isGrounded) {
-                fairy.vy = fairy.jumpForce;
-                fairy.isGrounded = false;
-            }
-
-            // Pitfall Fall Condition (falling down open gaps)
-            if (fairy.y > canvas.height) {
-                resetPlayerOnDamage();
-            }
-
-            // Processing Hazard Obstacle Damage Overlays
-            obstacles.forEach(o => {
-                if (fairy.x + fairy.width > o.x && fairy.x < o.x + o.w &&
-                    fairy.y + fairy.height > o.y && fairy.y < o.y + o.h) {
-                    resetPlayerOnDamage();
-                }
-            });
-
-            // Clear Screen Frame
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
-            ctx.save();
-            // Translate drawing system relative to current side-scrolling camera window
-            ctx.translate(-cameraX, 0);
-
-            if (inTrophyRoom) {
-                // Sanctuary Room Visual Scene Rendering
-                let grad = ctx.createLinearGradient(0,0,0,400);
-                grad.addColorStop(0, "#2e1065"); grad.addColorStop(1, "#0f0521");
-                ctx.fillStyle = grad; ctx.fillRect(0,0,800,400);
-                
-                // Draw Giant Bed
-                ctx.font = "65px Arial"; ctx.fillText("🛌✨", 360, 365);
-
-                // Display kittens comfortably around the room
-                ctx.font = "30px Arial";
-                ctx.fillText("🐱", 120, 365); 
-                ctx.fillText("🐈‍⬛", 220, 365); 
-                ctx.fillText("🦨", 310, 365); 
-                ctx.fillText("🐈", 480, 365); 
-                ctx.fillText("🐅", 570, 365); 
-                ctx.fillText("🦁", 670, 365); 
-
-                // NPC Chato
-                ctx.font = "45px Arial"; ctx.fillText("👦❤️", 260, 365);
-
-                // Check finish proximity
-                if (Math.abs(fairy.x - 260) < 45) {
-                    isGameRunning = false;
-                    triggerFinalTrophySurprise();
-                }
-            } else {
-                // Background Ambient Details
-                ctx.fillStyle = "rgba(244, 114, 182, 0.08)";
-                for(let i=0; i<35; i++) {
-                    let starX = (i * 73) % VIRTUAL_MAP_WIDTH;
-                    let starY = (i * 37) % 250;
-                    ctx.fillRect(starX, starY, 3, 3);
-                }
-
-                // Render Platforms
-                platforms.forEach(p => {
-                    ctx.fillStyle = p.type === 'moving' ? "#6d28d9" : "#4c1d95";
-                    ctx.fillRect(p.x, p.y, p.w, p.h);
-                    
-                    // Top glowing neon accent line
-                    ctx.fillStyle = "rgba(244, 114, 182, 0.6)";
-                    ctx.fillRect(p.x, p.y, p.w, 4);
-                });
-
-                // Render Spikes/Obstacles
-                ctx.fillStyle = "var(--danger-color)";
-                obstacles.forEach(o => {
-                    ctx.beginPath();
-                    ctx.moveTo(o.x, o.y + o.h);
-                    ctx.lineTo(o.x + o.w/2, o.y);
-                    ctx.lineTo(o.x + o.w, o.y + o.h);
-                    ctx.fill();
-                    // Sparkle indicator over hazard points
-                    ctx.font = "10px Arial";
-                    ctx.fillText("⚡", o.x + o.w/4, o.y - 2);
-                });
-
-                // Draw Goal Cat
-                ctx.font = "34px Arial";
-                ctx.fillText(levelGoalCat.emoji, levelGoalCat.x, levelGoalCat.y + 28);
-
-                // Check win intersection
-                if (fairy.x + fairy.width > levelGoalCat.x && fairy.x < levelGoalCat.x + levelGoalCat.width &&
-                    fairy.y + fairy.height > levelGoalCat.y && fairy.y < levelGoalCat.y + levelGoalCat.height) {
-                    isGameRunning = false;
-                    triggerLevelCompletedPopup();
-                }
-            }
-
-            // Render Player Avatar (Aranza the Fairy)
-            ctx.font = "32px Arial";
-            ctx.fillText("🧚‍♀️", fairy.x, fairy.y + 28);
-
-            ctx.restore();
-            requestAnimationFrame(updateLoop);
+            // Keep Aranza gliding in the Sanctuary so you can fly around
+            let targetVx = (input.right ? 5 : 0) - (input.left ? 5 : 0);
+            let targetVy = (input.down ? 5 : 0) - (input.up ? 5 : 0);
+            fairy.vx += (targetVx - fairy.vx) * 0.1;
+            fairy.vy += (targetVy - fairy.vy) * 0.1;
+            fairy.x += fairy.vx;
+            fairy.y += fairy.vy;
+            fairy.x = Math.max(0, Math.min(canvas.width - 70, fairy.x));
+            fairy.y = Math.max(0, Math.min(canvas.height - 80, fairy.y));
         }
 
-        // Safety checkpoint function when hitting spikes
-        function resetPlayerOnDamage() {
-            fairy.x = 60;
-            fairy.y = 200;
-            fairy.vx = 0;
-            fairy.vy = 0;
-        }
+        // --- DRAW ARANZA ---
+        let activeAranzaAnim = isPickingUp ? assets.fairy_pickup : assets.fairy_fly;
+        drawSprite(activeAranzaAnim, fairy.x, fairy.y, 80, 90);
 
-        // --- POPUP AND DIALOGUE WINDOW MODALS ---
-        function triggerLevelCompletedPopup() {
-            const data = catLevels[currentLevel];
-            const modal = document.getElementById("story-dialogue");
-            
-            document.getElementById("dialogue-title").innerText = `Rescued: ${data.name}! 🎉`;
-            document.getElementById("dialogue-body").innerText = `${data.details} (${data.type})`;
-            
-            const btn = document.getElementById("dialogue-btn");
-            btn.innerText = currentLevel === 5 ? "Enter the Trophy Room 👑✨" : "Next Level ✨";
-            
-            modal.style.display = "block";
-        }
+        requestAnimationFrame(loop);
+    }
 
-        function closeDialogue() {
-            document.getElementById("story-dialogue").style.display = "none";
-            currentLevel++;
-            isGameRunning = true;
-            loadLevel(currentLevel);
-            if (currentLevel <= 6) updateLoop();
-        }
+    // Start the game
+    loop();
+</script>
 
-        function triggerFinalTrophySurprise() {
-            const modal = document.getElementById("story-dialogue");
-            document.getElementById("dialogue-title").innerText = "💬 Chato says:";
-            document.getElementById("dialogue-body").innerHTML = "✨ <strong>Aranza, you did it!</strong> ✨<br><br>Welcome to our magical sanctuary. Ameli, Shadow, Silvie, Gray, La niña, and Neo are all safe and cozy here with us now! Just like you rescued them in this game, your beautiful presence rescues my day, every single day. Thank you for going on this adventure with me. I love you to the stars and back! ❤️";
-            
-            document.getElementById("dialogue-btn").style.display = "none"; 
-            modal.style.display = "block";
-        }
-    </script>
 </body>
 </html>
